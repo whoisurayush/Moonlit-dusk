@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Moonlit Dusk — iOS Style Shopping &amp; Night Couple App</title>
+  <style>
+    /* =========================================================
+       1. iOS DESIGN TOKENS (DAY & NIGHT COUPLE MODE)
+       ========================================================= */
+    :root {
+      --bg-primary: #F2F2F7;
+      --bg-secondary: #FFFFFF;
+      --bg-tertiary: #E5E5EA;
+      --glass-bg: rgba(255, 255, 255, 0.78);
+      --glass-border: rgba(0, 0, 0, 0.08);
+      --text-primary: #1C1C1E;
+      --text-secondary: #6E6E73;
+      --accent: #007AFF;
+      --accent-soft: rgba(0, 122, 255, 0.12);
+      --pink-accent: #FF2D55;
+      --green-accent: #34C759;
+      --orange-accent: #FF9500;
+      --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      --spring: cubic-bezier(0.32, 0.72, 0, 1);
+      --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    body.night-mode {
+      --bg-primary: #0B0B14;
+      --bg-secondary: #181826;
+      --bg-tertiary: #252538;
+      --glass-bg: rgba(24, 24, 38, 0.80);
+      --glass-border: rgba(255, 255, 255, 0.10);
+      --text-primary: #F5F5F7;
+      --text-secondary: #A1A1B5;
+      --accent: #FF375F;
+      --accent-soft: rgba(255, 55, 95, 0.16);
+      --pink-accent: #BF5AF2;
+      --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", system-ui, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.55s var(--spring), color 0.4s ease;
+      overflow-x: hidden;
+      min-height: 100vh;
+      padding-bottom: 96px;
+    }
+
+    /* =========================================================
+       2. TOP iOS FROSTED HEADER
+       ========================================================= */
+    .ios-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 12px 16px 12px;
+      transition: background 0.5s ease, border-color 0.5s ease;
+    }
+
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .app-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--pink-accent));
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.28);
+      transition: transform 0.35s var(--spring-bounce), background 0.5s ease;
+    }
+
+    .app-icon:active {
+      transform: scale(0.88);
+    }
+
+    .brand-text h1 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      line-height: 1.1;
+    }
+
+    .brand-text span {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* iOS Segmented Mode Switcher */
+    .mode-switch {
+      display: inline-flex;
+      background: var(--bg-tertiary);
+      padding: 3px;
+      border-radius: 999px;
+      position: relative;
+      border: 1px solid var(--glass-border);
+    }
+
+    .mode-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.35s var(--spring-bounce);
+      white-space: nowrap;
+    }
+
+    .mode-btn.active {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+      transform: scale(1.02);
+    }
+
+    /* iOS Search Bar */
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: var(--bg-tertiary);
+      border: 1px solid transparent;
+      border-radius: 14px;
+      padding: 10px 38px 10px 38px;
+      font-size: 15px;
+      color: var(--text-primary);
+      outline: none;
+      transition: all 0.3s var(--spring);
+    }
+
+    .search-box input:focus {
+      background: var(--bg-secondary);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      font-size: 15px;
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 10px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: none;
+      background: var(--text-secondary);
+      color: var(--bg-secondary);
+      font-size: 12px;
+      cursor: pointer;
+      display: none;
+      place-items: center;
+      transition: transform 0.2s var(--spring-bounce);
+    }
+
+    .clear-search.visible {
+      display: grid;
+    }
+
+    /* =========================================================
+       3. MAIN CONTAINER & AD BANNER
+       ========================================================= */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 14px 16px;
+    }
+
+    .ad-section {
+      margin-bottom: 18px;
+    }
+
+    .ad-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .ad-pill {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .ad-timer {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .ad-carousel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 22px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .ad-track {
+      display: flex;
+      transition: transform 0.65s var(--spring);
+      will-change: transform;
+    }
+
+    .ad-slide {
+      min-width: 100%;
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .ad-slide-content {
+      max-width: 68%;
+    }
+
+    .ad-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(8px);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    .ad-slide h2 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .ad-slide p {
+      font-size: 13px;
+      opacity: 0.92;
+      margin-bottom: 12px;
+      line-height: 1.35;
+    }
+
+    .ad-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      color: #1C1C1E;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.25s var(--spring-bounce);
+    }
+
+    .ad-cta:active {
+      transform: scale(0.92);
+    }
+
+    .ad-emoji {
+      font-size: 62px;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.25));
+      animation: floatY 3.2s ease-in-out infinite;
+    }
+
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0px) rotate(-2deg); }
+      50% { transform: translateY(-6px) rotate(3deg); }
+    }
+
+    .ad-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .ad-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--bg-tertiary);
+      border: none;
+      cursor: pointer;
+      transition: all 0.35s var(--spring);
+    }
+
+    .ad-dot.active {
+      width: 22px;
+      background: var(--accent);
+    }
+
+    /* =========================================================
+       4. NIGHT COUPLE AUTO-SWIPE SHELF
+       ========================================================= */
+    .night-shelf {
+      background: linear-gradient(135deg, rgba(255, 55, 95, 0.14), rgba(191, 90, 242, 0.14));
+      border: 1px solid rgba(255, 55, 95, 0.25);
+      border-radius: 22px;
+      padding: 14px;
+      margin-bottom: 18px;
+      display: none;
+      animation: fadeSlideIn 0.5s var(--spring);
+    }
+
+    body.night-mode .night-shelf {
+      display: block;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .shelf-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .shelf-header h3 {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .auto-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .night-scroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+
+    .night-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .night-mini-card {
+      min-width: 158px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 12px;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.3s var(--spring-bounce);
+    }
+
+    .night-mini-card:active {
+      transform: scale(0.94);
+    }
+
+    .night-mini-icon {
+      font-size: 36px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .night-mini-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .night-mini-price {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* =========================================================
+       5. CATEGORIES & PRODUCT GRID
+       ========================================================= */
+    .categories {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 12px;
+      margin-bottom: 6px;
+    }
+
+    .categories::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cat-pill {
+      border: 1px solid var(--glass-border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.3s var(--spring-bounce);
+    }
+
+    .cat-pill:active {
+      transform: scale(0.92);
+    }
+
+    .cat-pill.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 12px var(--accent-soft);
+    }
+
+    .section-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .section-title-row h2 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .item-count {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+      gap: 14px;
+    }
+
+    .product-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 12px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: transform 0.35s var(--spring-bounce), box-shadow 0.3s ease;
+      animation: cardPop 0.45s var(--spring) backwards;
+    }
+
+    @keyframes cardPop {
+      from { opacity: 0; transform: translateY(14px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .product-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .product-card:active {
+      transform: scale(0.96);
+    }
+
+    .card-top-badges {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .discount-badge {
+      font-size: 10px;
+      font-weight: 800;
+      background: rgba(52, 199, 89, 0.16);
+      color: var(--green-accent);
+      padding: 3px 7px;
+      border-radius: 8px;
+    }
+
+    .wish-btn {
+      border: none;
+      background: var(--bg-tertiary);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      transition: transform 0.3s var(--spring-bounce);
+    }
+
+    .wish-btn.wished {
+      transform: scale(1.18);
+      background: rgba(255, 45, 85, 0.18);
+    }
+
+    .product-visual {
+      height: 98px;
+      border-radius: 14px;
+      background: var(--bg-primary);
+      display: grid;
+      place-items: center;
+      font-size: 48px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: transform 0.3s var(--spring-bounce);
+    }
+
+    .product-visual:hover {
+      transform: scale(1.04);
+    }
+
+    .product-title {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 4px;
+      cursor: pointer;
+    }
+
+    .product-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rating-pill {
+      background: rgba(255, 149, 0, 0.16);
+      color: var(--orange-accent);
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .price-now {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .price-mrp {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-decoration: line-through;
+    }
+
+    .add-btn {
+      width: 100%;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.25s var(--spring-bounce), opacity 0.2s;
+    }
+
+    .add-btn:active {
+      transform: scale(0.93);
+    }
+
+    .qty-stepper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--accent-soft);
+      border-radius: 12px;
+      padding: 4px;
+    }
+
+    .qty-stepper button {
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 9px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      transition: transform 0.2s var(--spring-bounce);
+    }
+
+    .qty-stepper button:active {
+      transform: scale(0.86);
+    }
+
+    .qty-stepper span {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    /* =========================================================
+       6. iOS BOTTOM TAB BAR
+       ========================================================= */
+    .ios-tabbar {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 540px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(26px) saturate(190%);
+      -webkit-backdrop-filter: blur(26px) saturate(190%);
+      border: 1px solid var(--glass-border);
+      border-radius: 26px;
+      padding: 8px 12px 10px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+      z-index: 50;
+    }
+
+    .tab-item {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      padding: 4px 10px;
+      transition: transform 0.3s var(--spring-bounce), color 0.25s;
+    }
+
+    .tab-item:active {
+      transform: scale(0.86);
+    }
+
+    .tab-item.active {
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .tab-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -2px;
+      right: 2px;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: var(--pink-accent);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      display: none;
+      place-items: center;
+      padding: 0 5px;
+      animation: badgePop 0.35s var(--spring-bounce);
+    }
+
+    .cart-badge.visible {
+      display: grid;
+    }
+
+    @keyframes badgePop {
+      0% { transform: scale(0.4); }
+      70% { transform: scale(1.25); }
+      100% { transform: scale(1); }
+    }
+
+    /* =========================================================
+       7. BOTTOM SHEET MODAL & TOAST
+       ========================================================= */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(4px);
+      z-index: 70;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .sheet-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .ios-sheet {
+      width: 100%;
+      max-width: 600px;
+      max-height: 84vh;
+      background: var(--bg-secondary);
+      border-radius: 28px 28px 0 0;
+      padding: 12px 20px 28px;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.45s var(--spring);
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .sheet-backdrop.open .ios-sheet {
+      transform: translateY(0);
+    }
+
+    .sheet-handle {
+      width: 40px;
+      height: 5px;
+      border-radius: 999px;
+      background: var(--bg-tertiary);
+      margin: 0 auto 14px;
+    }
+
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .sheet-header h3 {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .close-sheet {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .cart-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .cart-row-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cart-row-emoji {
+      font-size: 30px;
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: var(--bg-primary);
+      display: grid;
+      place-items: center;
+    }
+
+    .summary-box {
+      background: var(--bg-primary);
+      border-radius: 16px;
+      padding: 14px;
+      margin: 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .summary-total {
+      font-size: 17px;
+      font-weight: 800;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 8px;
+    }
+
+    .primary-ios-btn {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.25s var(--spring-bounce);
+    }
+
+    .primary-ios-btn:active {
+      transform: scale(0.96);
+    }
+
+    .ios-toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translate(-50%, -90px);
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+      z-index: 90;
+      transition: transform 0.45s var(--spring-bounce);
+      white-space: nowrap;
+    }
+
+    .ios-toast.show {
+      transform: translate(-50%, 0);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 36px 16px;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <!-- Toast Notification -->
+  <div id="iosToast" class="ios-toast">Added to cart</div>
+
+  <!-- Top Header -->
+  <header class="ios-header">
+    <div class="header-inner">
+      <div class="top-row">
+        <div class="brand-title">
+          <div class="app-icon">🌙</div>
+          <div class="brand-text">
+            <h1>Moonlit Dusk</h1>
+            <span id="modeSubtitle">Day Shopping • Express Delivery</span>
+          </div>
+        </div>
+
+        <div class="mode-switch" role="group" aria-label="Shopping Mode">
+          <button id="dayBtn" class="mode-btn active" type="button">☀️ Day</button>
+          <button id="nightBtn" class="mode-btn" type="button">🌙 Night Couple</button>
+        </div>
+      </div>
+
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input id="searchInput" type="text" placeholder="Search chocolates, snacks, drinks, cakes..." />
+        <button id="clearSearch" class="clear-search" type="button" aria-label="Clear search">✕</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Ad Banner -->
+    <section class="ad-section" aria-label="Store Featured Deals">
+      <div class="ad-label-row">
+        <span id="adModeBadge" class="ad-pill">Store Special • Self Ad</span>
+        <span id="adTimerText" class="ad-timer">Auto-swiping every 3.5s</span>
+      </div>
+      <div class="ad-carousel" id="adCarousel">
+        <div class="ad-track" id="adTrack"></div>
+      </div>
+      <div class="ad-dots" id="adDots"></div>
+    </section>
+
+    <!-- Night Couple Shelf -->
+    <section class="night-shelf" id="nightShelf">
+      <div class="shelf-header">
+        <h3>🌙 Couple's Night Cravings</h3>
+        <span class="auto-badge">Auto-Swiping ▶</span>
+      </div>
+      <div class="night-scroll" id="nightScroll"></div>
+    </section>
+
+    <!-- Category Pills -->
+    <div class="categories" id="categoryBar"></div>
+
+    <!-- Product Grid -->
+    <div class="section-title-row">
+      <h2 id="gridHeading">Trending Today</h2>
+      <span id="itemCount" class="item-count"></span>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </main>
+
+  <!-- Floating Bottom Tab Bar -->
+  <nav class="ios-tabbar" aria-label="App Navigation">
+    <button class="tab-item active" data-tab="home" type="button">
+      <span class="tab-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="tab-item" data-tab="couple" type="button">
+      <span class="tab-icon">🌙</span>
+      <span>Night Picks</span>
+    </button>
+    <button class="tab-item" data-tab="wishlist" type="button">
+      <span class="tab-icon">❤️</span>
+      <span>Saved</span>
+    </button>
+    <button class="tab-item" data-tab="cart" type="button">
+      <span class="tab-icon">🛒</span>
+      <span>Cart</span>
+      <span id="cartBadge" class="cart-badge">0</span>
+    </button>
+  </nav>
+
+  <!-- Bottom Sheet Modal -->
+  <div id="sheetBackdrop" class="sheet-backdrop">
+    <div class="ios-sheet" role="dialog" aria-modal="true">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <h3 id="sheetTitle">Your Cart</h3>
+        <button id="closeSheet" class="close-sheet" type="button" aria-label="Close">✕</button>
+      </div>
+      <div id="sheetBody"></div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       8. APP DATA & CATALOG
+       ========================================================= */
+    const DAY_ADS = [
+      {
+        id: 101,
+        tag: "MOONLIT DUSK • DAY",
+        title: "Wireless Buds & Tech",
+        desc: "Best-selling ANC Earbuds with 40% instant off.",
+        cta: "Shop Now",
+        emoji: "🎧",
+        bg: "linear-gradient(135deg, #007AFF, #5856D6)"
+      },
+      {
+        id: 102,
+        tag: "STORE FRESH • DAY",
+        title: "Morning Coffee & Snacks",
+        desc: "Roasted Arabica + Butter Cookies combo delivered fast.",
+        cta: "Grab Combo",
+        emoji: "☕",
+        bg: "linear-gradient(135deg, #FF9500, #FF5E3A)"
+      },
+      {
+        id: 103,
+        tag: "OWN BRAND • DAY",
+        title: "Smart Watch Series",
+        desc: "AMOLED display, 7-day battery, direct from Moonlit Dusk.",
+        cta: "Explore",
+        emoji: "⌚",
+        bg: "linear-gradient(135deg, #34C759, #00A896)"
+      }
+    ];
+
+    const NIGHT_ADS = [
+      {
+        id: 1,
+        tag: "COUPLE NIGHT AD • AUTO",
+        title: "Silk Chocolate + Chocobar",
+        desc: "Late-night sweet craving pack for two. 12-min delivery!",
+        cta: "Order Sweet Pack",
+        emoji: "🍫",
+        bg: "linear-gradient(135deg, #FF2D55, #BF5AF2)"
+      },
+      {
+        id: 2,
+        tag: "MIDNIGHT SNACK • AUTO",
+        title: "Chilled Coke & Oreo Duo",
+        desc: "Movie night special: 2x Chilled Coke + Oreo Family Pack.",
+        cta: "Add Combo",
+        emoji: "🥤",
+        bg: "linear-gradient(135deg, #E50914, #FF5E3A)"
+      },
+      {
+        id: 3,
+        tag: "COUPLE DESSERT • AUTO",
+        title: "Warm Choco Lava Cake",
+        desc: "Molten dark chocolate cake + 2 Chocobars for tonight.",
+        cta: "Treat Tonight",
+        emoji: "🍰",
+        bg: "linear-gradient(135deg, #6E45E2, #88D3CE)"
+      }
+    ];
+
+    const PRODUCTS = [
+      { id: 1, name: "Dairy Milk Silk Roast Almond", category: "Chocolates", price: 175, mrp: 200, rating: 4.9, reviews: "3.2k", emoji: "🍫", night: true, delivery: "10 mins", desc: "Rich creamy milk chocolate with roasted almonds — #1 late-night couple favorite." },
+      { id: 2, name: "Chilled Coca-Cola (750ml x 2)", category: "Drinks", price: 85, mrp: 100, rating: 4.8, reviews: "5.1k", emoji: "🥤", night: true, delivery: "10 mins", desc: "Ice-cold fizzy Coke duo pack for midnight movies & snacks." },
+      { id: 3, name: "Chocobar Crunchy Ice Cream", category: "Ice Cream", price: 90, mrp: 110, rating: 4.9, reviews: "2.4k", emoji: "🍦", night: true, delivery: "12 mins", desc: "Pack of 2 classic vanilla bars dipped in thick crunchy dark chocolate." },
+      { id: 4, name: "Oreo & Bourbon Biscuit Combo", category: "Biscuits", price: 110, mrp: 140, rating: 4.7, reviews: "4.0k", emoji: "🍪", night: true, delivery: "12 mins", desc: "Crunchy chocolate cream biscuits — perfect for late-night tea or milk." },
+      { id: 5, name: "Molten Choco Lava Cake (2 Pcs)", category: "Cakes", price: 169, mrp: 220, rating: 4.9, reviews: "1.9k", emoji: "🍰", night: true, delivery: "15 mins", desc: "Warm gooey chocolate center cakes baked fresh for couple dessert time." },
+      { id: 6, name: "Hide & Seek Choco Chip Pack", category: "Biscuits", price: 60, mrp: 75, rating: 4.8, reviews: "2.8k", emoji: "🥠", night: true, delivery: "10 mins", desc: "Classic choco-chip cookies loaded with real chocolate drops." },
+      { id: 7, name: "Couple Midnight Movie Box", category: "Night Combos", price: 299, mrp: 399, rating: 5.0, reviews: "1.4k", emoji: "🍿", night: true, delivery: "14 mins", desc: "All-in-one: Chocolate + Biscuit + 2x Coke + 2x Chocobar." },
+      { id: 101, name: "Moonlit Pro ANC Earbuds", category: "Electronics", price: 1499, mrp: 2999, rating: 4.7, reviews: "6.4k", emoji: "🎧", night: false, delivery: "Tomorrow", desc: "Active noise cancellation with 36-hour battery & spatial audio." },
+      { id: 102, name: "Classic Arabica Coffee Jar", category: "Daily Needs", price: 295, mrp: 360, rating: 4.6, reviews: "1.8k", emoji: "☕", night: false, delivery: "Today 4 PM", desc: "Smooth medium-roast instant coffee for energetic mornings." },
+      { id: 103, name: "Smart Fitness Watch AMOLED", category: "Electronics", price: 2199, mrp: 3999, rating: 4.5, reviews: "3.1k", emoji: "⌚", night: false, delivery: "Tomorrow", desc: "Heart-rate, sleep tracking & 100+ sports modes." }
+    ];
+
+    /* =========================================================
+       9. STATE MANAGEMENT & LOCAL STORAGE SYNC
+       ========================================================= */
+    const state = {
+      isNightMode: false,
+      activeTab: "home",
+      selectedCategory: "All",
+      searchQuery: "",
+      adIndex: 0,
+      cart: JSON.parse(localStorage.getItem("moonlit_cart") || "{}"),
+      wishlist: new Set(JSON.parse(localStorage.getItem("moonlit_wishlist") || "[1, 3]"))
+    };
+
+    let adInterval = null;
+    let nightShelfInterval = null;
+    let toastTimer = null;
+
+    // Auto-detect night time (8 PM to 5 AM) on startup
+    const currentHour = new Date().getHours();
+    if (currentHour >= 20 || currentHour < 5) {
+      state.isNightMode = true;
+    }
+
+    const els = {
+      dayBtn: document.getElementById("dayBtn"),
+      nightBtn: document.getElementById("nightBtn"),
+      modeSubtitle: document.getElementById("modeSubtitle"),
+      adModeBadge: document.getElementById("adModeBadge"),
+      adTrack: document.getElementById("adTrack"),
+      adDots: document.getElementById("adDots"),
+      nightScroll: document.getElementById("nightScroll"),
+      categoryBar: document.getElementById("categoryBar"),
+      productGrid: document.getElementById("productGrid"),
+      gridHeading: document.getElementById("gridHeading"),
+      itemCount: document.getElementById("itemCount"),
+      searchInput: document.getElementById("searchInput"),
+      clearSearch: document.getElementById("clearSearch"),
+      cartBadge: document.getElementById("cartBadge"),
+      sheetBackdrop: document.getElementById("sheetBackdrop"),
+      sheetTitle: document.getElementById("sheetTitle"),
+      sheetBody: document.getElementById("sheetBody"),
+      closeSheet: document.getElementById("closeSheet"),
+      iosToast: document.getElementById("iosToast")
+    };
+
+    function saveToLocalStorage() {
+      localStorage.setItem("moonlit_cart", JSON.stringify(state.cart));
+      localStorage.setItem("moonlit_wishlist", JSON.stringify([...state.wishlist]));
+    }
+
+    /* =========================================================
+       10. CORE RENDERING FUNCTIONS
+       ========================================================= */
+    function showToast(msg) {
+      els.iosToast.textContent = msg;
+      els.iosToast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => els.iosToast.classList.remove("show"), 2200);
+    }
+
+    function applyThemeMode() {
+      document.body.classList.toggle("night-mode", state.isNightMode);
+      els.dayBtn.classList.toggle("active", !state.isNightMode);
+      els.nightBtn.classList.toggle("active", state.isNightMode);
+
+      if (state.isNightMode) {
+        els.modeSubtitle.textContent = "Night Couple Mode • 10-Min Late Delivery";
+        els.adModeBadge.textContent = "Night Couple Self-Ads • Auto-Swiping";
+      } else {
+        els.modeSubtitle.textContent = "Day Shopping • Express Delivery";
+        els.adModeBadge.textContent = "Store Special • Self Ad";
+      }
+
+      state.adIndex = 0;
+      renderAds();
+      renderNightShelf();
+      renderCategories();
+      renderProducts();
+      startAutoSwipes();
+    }
+
+    function renderAds() {
+      const ads = state.isNightMode ? NIGHT_ADS : DAY_ADS;
+      els.adTrack.innerHTML = ads.map(ad => `
+        <div class="ad-slide" style="background: ${ad.bg}" data-ad-product="${ad.id}">
+          <div class="ad-slide-content">
+            <span class="ad-tag">${ad.tag}</span>
+            <h2>${ad.title}</h2>
+            <p>${ad.desc}</p>
+            <button class="ad-cta" type="button" data-ad-add="${ad.id}">${ad.cta} →</button>
+          </div>
+          <div class="ad-emoji">${ad.emoji}</div>
+        </div>
+      `).join("");
+
+      els.adDots.innerHTML = ads.map((_, idx) => `
+        <button class="ad-dot ${idx === state.adIndex ? "active" : ""}" data-dot="${idx}" type="button" aria-label="Slide ${idx + 1}"></button>
+      `).join("");
+
+      updateAdPosition();
+    }
+
+    function updateAdPosition() {
+      const ads = state.isNightMode ? NIGHT_ADS : DAY_ADS;
+      if (state.adIndex >= ads.length) state.adIndex = 0;
+      els.adTrack.style.transform = `translateX(-${state.adIndex * 100}%)`;
+      els.adDots.querySelectorAll(".ad-dot").forEach((dot, idx) => {
+        dot.classList.toggle("active", idx === state.adIndex);
+      });
+    }
+
+    function renderNightShelf() {
+      const nightItems = PRODUCTS.filter(p => p.night);
+      els.nightScroll.innerHTML = nightItems.map(item => `
+        <div class="night-mini-card" data-detail="${item.id}">
+          <span class="night-mini-icon">${item.emoji}</span>
+          <div class="night-mini-title">${item.name}</div>
+          <div class="night-mini-price">
+            <span>₹${item.price}</span>
+            <span>+ Add</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderCategories() {
+      const cats = ["All", "Chocolates", "Biscuits", "Ice Cream", "Drinks", "Cakes", "Night Combos", "Electronics", "Daily Needs"];
+      els.categoryBar.innerHTML = cats.map(cat => `
+        <button class="cat-pill ${state.selectedCategory === cat ? "active" : ""}" data-cat="${cat}" type="button">${cat}</button>
+      `).join("");
+    }
+
+    /* =========================================================
+       11. ENHANCED LIVE SEARCH & FILTER LOGIC
+       ========================================================= */
+    function getFilteredProducts() {
+      let list = [...PRODUCTS];
+
+      if (state.isNightMode) {
+        list.sort((a, b) => Number(b.night) - Number(a.night));
+      }
+
+      if (state.activeTab === "couple") {
+        list = list.filter(p => p.night);
+      } else if (state.activeTab === "wishlist") {
+        list = list.filter(p => state.wishlist.has(p.id));
+      }
+
+      if (state.selectedCategory !== "All") {
+        list = list.filter(p => p.category === state.selectedCategory);
+      }
+
+      // Live smart search filtering (case-insensitive across name, category, and description)
+      if (state.searchQuery.trim()) {
+        const queryTerms = state.searchQuery.toLowerCase().trim().split(/\s+/);
+        list = list.filter(p => {
+          const searchableText = `${p.name} ${p.category} ${p.desc}`.toLowerCase();
+          return queryTerms.every(term => searchableText.includes(term));
+        });
+      }
+
+      return list;
+    }
+
+    function renderProducts() {
+      const items = getFilteredProducts();
+
+      if (state.activeTab === "couple") {
+        els.gridHeading.textContent = "🌙 Couple's Night Specials";
+      } else if (state.activeTab === "wishlist") {
+        els.gridHeading.textContent = "❤️ Saved Favorites";
+      } else {
+        els.gridHeading.textContent = state.isNightMode ? "🌙 Late-Night Storefront" : "☀️ Trending Today";
+      }
+
+      els.itemCount.textContent = `${items.length} items`;
+
+      if (items.length === 0) {
+        els.productGrid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div style="font-size: 36px; margin-bottom: 6px;">🔍</div>
+            <p>No items found matching "${state.searchQuery}". Try searching something else or reset filters!</p>
+          </div>`;
+        return;
+      }
+
+      els.productGrid.innerHTML = items.map((p, idx) => {
+        const discount = Math.round(((p.mrp - p.price) / p.mrp) * 100);
+        const qty = state.cart[p.id] || 0;
+        const wished = state.wishlist.has(p.id);
+
+        return `
+          <article class="product-card" style="animation-delay: ${Math.min(idx * 0.04, 0.3)}s">
+            <div>
+              <div class="card-top-badges">
+                <span class="discount-badge">${discount}% OFF</span>
+                <button class="wish-btn ${wished ? "wished" : ""}" data-wish="${p.id}" type="button" aria-label="Wishlist">
+                  ${wished ? "❤️" : "🤍"}
+                </button>
+              </div>
+              <div class="product-visual" data-detail="${p.id}">${p.emoji}</div>
+              <div class="product-title" data-detail="${p.id}">${p.name}</div>
+              <div class="product-meta">
+                <span class="rating-pill">★ ${p.rating}</span>
+                <span>(${p.reviews}) • ${p.delivery}</span>
+              </div>
+            </div>
+            <div>
+              <div class="price-row">
+                <span class="price-now">₹${p.price}</span>
+                <span class="price-mrp">₹${p.mrp}</span>
+              </div>
+              ${qty === 0
+                ? `<button class="add-btn" data-add="${p.id}" type="button">Add to Cart</button>`
+                : `<div class="qty-stepper">
+                     <button data-dec="${p.id}" type="button">−</button>
+                     <span>${qty}</span>
+                     <button data-inc="${p.id}" type="button">+</button>
+                   </div>`
+              }
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function updateCartBadge() {
+      const totalQty = Object.values(state.cart).reduce((sum, n) => sum + n, 0);
+      els.cartBadge.textContent = totalQty;
+      els.cartBadge.classList.toggle("visible", totalQty > 0);
+    }
+
+    /* =========================================================
+       12. AUTO-SWIPE ENGINE
+       ========================================================= */
+    function startAutoSwipes() {
+      clearInterval(adInterval);
+      clearInterval(nightShelfInterval);
+
+      adInterval = setInterval(() => {
+        const ads = state.isNightMode ? NIGHT_ADS : DAY_ADS;
+        state.adIndex = (state.adIndex + 1) % ads.length;
+        updateAdPosition();
+      }, 3500);
+
+      if (state.isNightMode) {
+        nightShelfInterval = setInterval(() => {
+          const el = els.nightScroll;
+          if (!el) return;
+          if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 10) {
+            el.scrollTo({ left: 0, behavior: "smooth" });
+          } else {
+            el.scrollBy({ left: 170, behavior: "smooth" });
+          }
+        }, 2800);
+      }
+    }
+
+    /* =========================================================
+       13. MODALS & CART ACTIONS
+       ========================================================= */
+    function openProductDetail(productId) {
+      const p = PRODUCTS.find(x => x.id === productId);
+      if (!p) return;
+      els.sheetTitle.textContent = p.category;
+      els.sheetBody.innerHTML = `
+        <div style="text-align:center; padding: 12px 0;">
+          <div style="font-size: 72px; margin-bottom: 10px;">${p.emoji}</div>
+          <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 6px;">${p.name}</h2>
+          <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 14px;">${p.desc}</p>
+          <div style="font-size: 22px; font-weight: 800; margin-bottom: 16px;">
+            ₹${p.price} <span style="font-size:14px; color:var(--text-secondary); text-decoration:line-through;">₹${p.mrp}</span>
+          </div>
+          <button class="primary-ios-btn" id="sheetAddBtn" type="button">Add to Cart • ${p.delivery}</button>
+        </div>
+      `;
+      document.getElementById("sheetAddBtn").addEventListener("click", () => {
+        addToCart(p.id);
+        closeSheet();
+      });
+      els.sheetBackdrop.classList.add("open");
+    }
+
+    function openCartSheet() {
+      els.sheetTitle.textContent = state.isNightMode ? "🌙 Night Couple Cart" : "🛒 Your Cart";
+      const entries = Object.entries(state.cart).filter(([, q]) => q > 0);
+
+      if (entries.length === 0) {
+        els.sheetBody.innerHTML = `
+          <div class="empty-state">
+            <div style="font-size:48px; margin-bottom:10px;">🛍️</div>
+            <p>Your cart is empty. Add chocolates, snacks, or daily essentials!</p>
+          </div>
+        `;
+        els.sheetBackdrop.classList.add("open");
+        return;
+      }
+
+      let subtotal = 0;
+      const rowsHtml = entries.map(([id, qty]) => {
+        const p = PRODUCTS.find(x => x.id === Number(id));
+        if (!p) return "";
+        subtotal += p.price * qty;
+        return `
+          <div class="cart-row">
+            <div class="cart-row-left">
+              <div class="cart-row-emoji">${p.emoji}</div>
+              <div>
+                <div style="font-size:14px; font-weight:700;">${p.name}</div>
+                <div style="font-size:12px; color:var(--text-secondary);">₹${p.price} × ${qty}</div>
+              </div>
+            </div>
+            <div class="qty-stepper" style="width:96px;">
+              <button data-cart-dec="${p.id}" type="button">−</button>
+              <span>${qty}</span>
+              <button data-cart-inc="${p.id}" type="button">+</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      const deliveryFee = subtotal >= 299 ? 0 : 25;
+      const total = subtotal + deliveryFee;
+
+      els.sheetBody.innerHTML = `
+        <div>${rowsHtml}</div>
+        <div class="summary-box">
+          <div class="summary-line"><span>Subtotal</span><span>₹${subtotal}</span></div>
+          <div class="summary-line"><span>Delivery</span><span>${deliveryFee === 0 ? "FREE" : "₹" + deliveryFee}</span></div>
+          <div class="summary-line summary-total"><span>Total</span><span>₹${total}</span></div>
+        </div>
+        <button id="checkoutBtn" class="primary-ios-btn" type="button">Place Order • ₹${total}</button>
+      `;
+
+      document.getElementById("checkoutBtn").addEventListener("click", () => {
+        state.cart = {};
+        saveToLocalStorage();
+        updateCartBadge();
+        renderProducts();
+        closeSheet();
+        showToast("Order placed! Arriving super fast 🚀");
+      });
+
+      els.sheetBackdrop.classList.add("open");
+    }
+
+    function closeSheet() {
+      els.sheetBackdrop.classList.remove("open");
+    }
+
+    function addToCart(id) {
+      state.cart[id] = (state.cart[id] || 0) + 1;
+      saveToLocalStorage();
+      updateCartBadge();
+      renderProducts();
+      const item = PRODUCTS.find(p => p.id === id);
+      showToast(`Added ${item ? item.name : "item"} to cart`);
+    }
+
+    function updateQty(id, delta) {
+      const next = (state.cart[id] || 0) + delta;
+      if (next <= 0) delete state.cart[id];
+      else state.cart[id] = next;
+      saveToLocalStorage();
+      updateCartBadge();
+      renderProducts();
+    }
+
+    /* =========================================================
+       14. EVENT LISTENERS
+       ========================================================= */
+    els.dayBtn.addEventListener("click", () => {
+      state.isNightMode = false;
+      applyThemeMode();
+      showToast("Switched to Day Mode ☀️");
+    });
+
+    els.nightBtn.addEventListener("click", () => {
+      state.isNightMode = true;
+      applyThemeMode();
+      showToast("Night Couple Mode Active 🌙");
+    });
+
+    els.searchInput.addEventListener("input", (e) => {
+      state.searchQuery = e.target.value;
+      els.clearSearch.classList.toggle("visible", state.searchQuery.length > 0);
+      renderProducts();
+    });
+
+    els.clearSearch.addEventListener("click", () => {
+      state.searchQuery = "";
+      els.searchInput.value = "";
+      els.clearSearch.classList.remove("visible");
+      renderProducts();
+    });
+
+    els.adDots.addEventListener("click", (e) => {
+      const dot = e.target.closest("[data-dot]");
+      if (!dot) return;
+      state.adIndex = Number(dot.dataset.dot);
+      updateAdPosition();
+      startAutoSwipes();
+    });
+
+    els.adTrack.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-ad-add]");
+      const slide = e.target.closest("[data-ad-product]");
+      if (btn) {
+        addToCart(Number(btn.dataset.adAdd));
+      } else if (slide) {
+        openProductDetail(Number(slide.dataset.adProduct));
+      }
+    });
+
+    els.nightScroll.addEventListener("click", (e) => {
+      const card = e.target.closest("[data-detail]");
+      if (card) addToCart(Number(card.dataset.detail));
+    });
+
+    els.categoryBar.addEventListener("click", (e) => {
+      const pill = e.target.closest("[data-cat]");
+      if (!pill) return;
+      state.selectedCategory = pill.dataset.cat;
+      renderCategories();
+      renderProducts();
+    });
+
+    els.productGrid.addEventListener("click", (e) => {
+      const addBtn = e.target.closest("[data-add]");
+      const incBtn = e.target.closest("[data-inc]");
+      const decBtn = e.target.closest("[data-dec]");
+      const wishBtn = e.target.closest("[data-wish]");
+      const detailEl = e.target.closest("[data-detail]");
+
+      if (addBtn) addToCart(Number(addBtn.dataset.add));
+      else if (incBtn) updateQty(Number(incBtn.dataset.inc), 1);
+      else if (decBtn) updateQty(Number(decBtn.dataset.dec), -1);
+      else if (wishBtn) {
+        const id = Number(wishBtn.dataset.wish);
+        if (state.wishlist.has(id)) state.wishlist.delete(id);
+        else state.wishlist.add(id);
+        saveToLocalStorage();
+        renderProducts();
+      } else if (detailEl) {
+        openProductDetail(Number(detailEl.dataset.detail));
+      }
+    });
+
+    els.sheetBody.addEventListener("click", (e) => {
+      const inc = e.target.closest("[data-cart-inc]");
+      const dec = e.target.closest("[data-cart-dec]");
+      if (inc) {
+        updateQty(Number(inc.dataset.cartInc), 1);
+        openCartSheet();
+      } else if (dec) {
+        updateQty(Number(dec.dataset.cartDec), -1);
+        openCartSheet();
+      }
+    });
+
+    document.querySelectorAll(".tab-item").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const name = tab.dataset.tab;
+        if (name === "cart") {
+          openCartSheet();
+          return;
+        }
+        document.querySelectorAll(".tab-item").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        state.activeTab = name;
+        if (name === "couple" && !state.isNightMode) {
+          state.isNightMode = true;
+          applyThemeMode();
+        } else {
+          renderProducts();
+        }
+      });
+    });
+
+    els.closeSheet.addEventListener("click", closeSheet);
+    els.sheetBackdrop.addEventListener("click", (e) => {
+      if (e.target === els.sheetBackdrop) closeSheet();
+    });
+
+    // Initialize App
+    applyThemeMode();
+    updateCartBadge();
+  </script>
+</body>
+</html>
